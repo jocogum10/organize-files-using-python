@@ -13,9 +13,9 @@ from datetime import datetime
 def moveByFiletype(filetype, workingFolder,destinationFolder):
     movedfiles = 0
     if os.path.isdir(workingFolder) and os.path.isdir(destinationFolder):
-        # print(filetype, workingFolder,destinationFolder)
         txtfile = os.path.join(destinationFolder, 'list_of_files.txt')
         listOfFiles = open(txtfile, 'a+')
+        listOfFiles.write(f'\nMoving By Filetype: {filetype}\n')
         listOfFiles.write(f'\n{datetime.utcnow()}\n')
 
         # start moving files
@@ -26,13 +26,13 @@ def moveByFiletype(filetype, workingFolder,destinationFolder):
             # check for the filetypes
             for filename in filenames:
                 if filename.endswith(filetype):
-                    # 3. move the file to the destination folder
+                    # move the file to the destination folder
                     currDir = os.path.join(foldername,filename)
                     destinationDir = os.path.join(destinationFolder, filename)
                     shutil.move(currDir, destinationDir)
                     movedfiles += 1
                     print(f"Moving {filename}...")
-                    listOfFiles.write(currDir + '/' + filename + '\n')
+                    listOfFiles.write(currDir + '\n')
 
         print('Completed...')
         listOfFiles.write(f"Completed.\nMoved {movedfiles} files.")
@@ -41,8 +41,36 @@ def moveByFiletype(filetype, workingFolder,destinationFolder):
         print('There was an error moving files by filetype')
         sys.exit(1)
         
-def moveByKeyword(keyword, filetype, workingFolder,destinationFolder):
-    print(keyword, filetype, workingFolder,destinationFolder)
+def moveByKeyword(keyword, workingFolder,destinationFolder):
+    movedfiles = 0
+    if os.path.isdir(workingFolder) and os.path.isdir(destinationFolder):
+        txtfile = os.path.join(destinationFolder, 'list_of_files.txt')
+        listOfFiles = open(txtfile, 'a+')
+        listOfFiles.write(f'\nMoving By Keyword: {keyword}\n')
+        listOfFiles.write(f'\n{datetime.utcnow()}\n')
+
+        # start moving files
+        for foldername, subfolder, filenames in os.walk(workingFolder):
+            # skip the destination folder if walked
+            if foldername == destinationFolder:
+                continue
+            # check for the filetypes
+            for filename in filenames:
+                if keyword in filename:
+                    # move the file to the destination folder
+                    currDir = os.path.join(foldername,filename)
+                    destinationDir = os.path.join(destinationFolder, filename)
+                    shutil.move(currDir, destinationDir)
+                    movedfiles += 1
+                    print(f"Moving {filename}...")
+                    listOfFiles.write(currDir + '\n')
+
+        print('Completed...')
+        listOfFiles.write(f"Completed.\nMoved {movedfiles} files.")
+        listOfFiles.close()
+    else:
+        print('There was an error moving files by filetype')
+        sys.exit(1)
 
 # define the askdirectory function
 def askWorkingDirectory():
@@ -81,11 +109,10 @@ workingFolderDialog.grid(row=2,column=2,sticky="nsew")
 destinationFolderDialog.grid(row=3,column=2,sticky="nsew")
 
 # options for the commands
-tkinter.Label(root, text="Options", relief="raised").grid(row=4, columnspan=3, sticky="nsew")
-moveByKeywordButton = tkinter.Button(root,text="Move Files by Keyword", command=(lambda:moveByKeyword(keyword=keywordEntry.get(), filetype=filetypeEntry.get(), workingFolder=workingFolderEntry.get(),destinationFolder=destinationFolderEntry.get())))
+moveByKeywordButton = tkinter.Button(root,text="Move Files by Keyword", command=(lambda:moveByKeyword(keyword=keywordEntry.get(), workingFolder=workingFolderEntry.get(),destinationFolder=destinationFolderEntry.get())))
 moveByFiletypeButton = tkinter.Button(root,text="Move Files by Filetype", command=(lambda:moveByFiletype(filetype=filetypeEntry.get(), workingFolder=workingFolderEntry.get(),destinationFolder=destinationFolderEntry.get())))
-moveByKeywordButton.grid(row=5,column=0)
-moveByFiletypeButton.grid(row=5,column=1)
+moveByKeywordButton.grid(row=0,column=2, sticky="nsew")
+moveByFiletypeButton.grid(row=1,column=2, sticky="nsew")
 
 if __name__ == '__main__':
     root.mainloop()

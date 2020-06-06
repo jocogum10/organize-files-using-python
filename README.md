@@ -1,9 +1,11 @@
 # organize-files-using-python
-a python script which moves the file with filetype, keyword, and destination folder as input
+a python script which moves the file with filetype or keyword, working folder & destination folder as input
 
 # Usage
 ```
 python3 organizeDocument.py '{filetype}' '{keyword}' '{working directory}' '{destination folder}'
+or
+python3 organizeFilesGUI.py
 ```
 
 ## Author
